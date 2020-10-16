@@ -90,10 +90,10 @@
         ;; its own, coded in Properties, wont it?
         user (get properties "user-name" "root")]
     (for [host zabbix-hosts]
-      (make-node {"name" (:nodename host)     ; FIXME: do we need it?
-                  "nodename" (:nodename host) ; obligatory
+      (make-node {"nodename" (:nodename host) ; obligatory
                   "hostname" (:hostname host)
-                  "username" (or user (:user host))}
+                  "username" (or user (:user host))
+                  "description" (:description host)}
                  #{(get ["production" "staging" "test"] (rand-int 3))}))))
 
 (defn create-resource-model-source [properties]
