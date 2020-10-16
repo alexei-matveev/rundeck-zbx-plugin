@@ -31,10 +31,7 @@
               "Rundeck-Plugin-Archive" "true"
               ;; Comma-separated. FWIW, the rundeck_zbx_plugin.core
               ;; didnt quite work, see below:
-              "Rundeck-Plugin-Classnames" (clojure.string/join
-                                           ","
-                                           (for [c ["HelloStep" "HelloNodes"]]
-                                             (str "rundeck_zbx_plugin." c)))
+              "Rundeck-Plugin-Classnames" "rundeck_zbx_plugin.HelloNodes"
               ;; Space-separated:
               "Rundeck-Plugin-Libs" ""
               ;; "Class-Path" ""
