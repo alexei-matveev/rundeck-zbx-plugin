@@ -4,7 +4,8 @@
 ;; Rundeck. Maybe you should also implement a CLI ...
 ;;
 (ns rundeck-zbx-plugin.core
-  (:require [proto-zabbix.api :as api]))
+  (:require [proto-zabbix.api :as api])
+  (:gen-class))
 
 ;;
 ;; Config should be like:
@@ -19,3 +20,6 @@
                 :password (get properties "password")}
         zbx (api/make-zbx config)]
     (take 3 (zbx "host.get"))))
+
+(defn -main [& args]
+  (println "Hello from Rundeck Plugin CLI!"))

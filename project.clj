@@ -9,7 +9,7 @@
   ;; problems, so say  Leiningen docs.  So Clojure stays  in ./src and
   ;; Java goes here.
   :java-source-paths ["java"]
-  :main ^:skip-aot rundeck-zbx-plugin.core
+  :main rundeck-zbx-plugin.core
   :target-path "target/%s"
   ;;
   ;; Rundeck Core Classes are provided  by Framework --- do no include
