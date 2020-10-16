@@ -55,7 +55,7 @@
       (.property (-> (PropertyBuilder/builder)
                      (.string "password")
                      (.title "Zabbix password")
-                     (.description "FIXME: make it invisible")
+                     (.description "Maybe this should not be your personal password?")
                      (.defaultValue "zabbix")
                      (.renderingAsPassword)
                      (.required true)
