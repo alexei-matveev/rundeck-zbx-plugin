@@ -1,4 +1,4 @@
-#### Experiments with Rundeck in k3s
+#### Get Nodes from Zabbix
 
 Assuming you already installed the Token in your local config:
 
