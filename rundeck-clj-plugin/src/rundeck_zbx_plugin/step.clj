@@ -15,7 +15,7 @@
 ;; [1] https://docs.rundeck.com/docs/developer/03-step-plugins.html
 ;; [2] https://github.com/rundeck/rundeck/blob/development/examples/example-java-step-plugin/src/main/java/com/dtolabs/rundeck/plugin/example/ExampleStepPlugin.java
 ;;
-(ns rundeck-clj-plugin.step
+(ns rundeck-zbx-plugin.step
   (:import
    (com.dtolabs.rundeck.plugins.util DescriptionBuilder PropertyBuilder)
    (com.dtolabs.rundeck.plugins.step PluginStepContext)

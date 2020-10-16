@@ -1,4 +1,4 @@
-(defproject rundeck-clj-plugin "0.1.0-SNAPSHOT"
+(defproject rundeck-zbx-plugin "0.1.0-SNAPSHOT"
   :description "Experimental Rundeck Plugin"
   :url "https://github.com/alexei-matveev/hello-rundeck"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
@@ -8,7 +8,7 @@
   ;; problems, so say  Leiningen docs.  So Clojure stays  in ./src and
   ;; Java goes here.
   :java-source-paths ["java"]
-  :main ^:skip-aot rundeck-clj-plugin.core
+  :main ^:skip-aot rundeck-zbx-plugin.core
   :target-path "target/%s"
   ;;
   ;; Rundeck Core Classes are provided  by Framework --- do no include
@@ -24,16 +24,16 @@
                         [[org.rundeck/rundeck-core "3.3.4-20201007"]]}
              :uberjar {:jvm-opts ["-Dclojure.compiler.direct-linking=true"]}}
   ;; https://docs.rundeck.com/docs/developer/01-plugin-development.html#java-plugin-development
-  :jar-name "rundeck-clj-plugin-0.1.0.jar"
-  :uberjar-name "rundeck-clj-plugin-0.1.0.jar"
+  :jar-name "rundeck-zbx-plugin-0.1.0.jar"
+  :uberjar-name "rundeck-zbx-plugin-0.1.0.jar"
   :manifest ~{"Rundeck-Plugin-Version" "1.2"
               "Rundeck-Plugin-Archive" "true"
-              ;; Comma-separated. FWIW, the rundeck_clj_plugin.core
+              ;; Comma-separated. FWIW, the rundeck_zbx_plugin.core
               ;; didnt quite work, see below:
               "Rundeck-Plugin-Classnames" (clojure.string/join
                                            ","
                                            (for [c ["HelloStep" "HelloNodes"]]
-                                             (str "rundeck_clj_plugin." c)))
+                                             (str "rundeck_zbx_plugin." c)))
               ;; Space-separated:
               "Rundeck-Plugin-Libs" ""
               ;; "Class-Path" ""
@@ -63,40 +63,3 @@
 ;; This is from the middle of the call stack:
 ;;
 ;; Caused by: java.io.FileNotFoundException: Could not locate clojure/core__init.class, clojure/core.clj or clojure/core.cljc on classpath.
-;; at clojure.lang.RT.load (RT.java:462) ~[?:?]
-;; at clojure.lang.RT.load (RT.java:424) ~[?:?]
-;; at clojure.lang.RT.<clinit> (RT.java:338) ~[?:?]
-;; at clojure.java.api.Clojure.<clinit> (Clojure.java:97) ~[?:?]
-;; at rundeck_clj_plugin.ExampleStepPlugin.hello (ExampleStepPlugin.java:70) ~[?:?]
-;; at rundeck_clj_plugin.ExampleStepPlugin.getDescription (ExampleStepPlugin.java:90) ~[?:?]
-;;
-;; The first attempt without Java  Shim failed too. The speculation is
-;; that the  Clojure Class "stab"  generated with gen-class  clause in
-;; the  namespace uses  its own  class loader  that cannot  locate the
-;; actual init code in  clojure/core__init.class. And despite the fact
-;; that          both         rundeck_clj_plugin/core.class          &
-;; rundeck_clj_plugin/core__init.class are  next to each other  in the
-;; JAR the  (Clojure) class loader  fails. Rundeck appears to  do some
-;; non-trivial voodoo with the content of the JAR plugins --- you will
-;; find "cache"  directories with Rundeck-Plugin-Libs unpacked  in the
-;; filesystem. No wonder the Clojure class loader fails.
-;;
-;; Rundeck prints a huge Stack  Trace after Uploading the plugin. This
-;; is a part of it:
-;;
-;; Caused by: java.lang.ExceptionInInitializerError
-;; at clojure.lang.Namespace.<init> (Namespace.java:34)
-;; at clojure.lang.Namespace.findOrCreate (Namespace.java:176)
-;; at clojure.lang.Var.internPrivate (Var.java:156)
-;; at rundeck_clj_plugin.core.<clinit> (Unknown Source)
-;; at java.base/java.lang.Class.forName0 (Native Method)
-;; at java.base/java.lang.Class.forName (Class.java:398)
-;; at com.dtolabs.rundeck.core.plugins.JarPluginProviderLoader.loadClass (JarPluginProviderLoader.java:435)
-;; ... 126 more
-;; Caused by: java.io.FileNotFoundException: Could not locate clojure/core__init.class, clojure/core.clj or clojure/core.cljc on classpath.
-;; at clojure.lang.RT.load (RT.java:462)
-;; at clojure.lang.RT.load (RT.java:424)
-;; at clojure.lang.RT.<clinit> (RT.java:338)
-;; ... 133 more
-;; com.dtolabs.rundeck.core.plugins.PluginException: Error loading class: rundeck_clj_plugin.core
-;; at com.dtolabs.rundeck.core.plugins.JarPluginProviderLoader.loadClass (JarPluginProviderLoader.java:440)

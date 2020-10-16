@@ -3,7 +3,7 @@
 //
 // [1] https://github.com/rundeck-plugins/rundeck-ec2-nodes-plugin
 //
-package rundeck_clj_plugin;
+package rundeck_zbx_plugin;
 
 import com.dtolabs.rundeck.core.plugins.Plugin;
 import com.dtolabs.rundeck.core.plugins.configuration.*;
@@ -22,7 +22,7 @@ public class HelloNodes implements ResourceModelSourceFactory, Describable {
     static final String NAME = "HelloNodes";
 
     // Maybe one schould separate code on the Clojure side too:
-    static final String ns = "rundeck-clj-plugin.nodes";
+    static final String ns = "rundeck-zbx-plugin.nodes";
 
     // Trying to  call Clojure from  here without the voodoo  with the
     // Class Loader will fail at loading clojure/core__init.class. See

@@ -24,7 +24,7 @@
 ;; [3] https://github.com/rundeck/rundeck/blob/development/examples/json-plugin/src/main/java/com/dtolabs/rundeck/plugin/resources/format/json/JsonResourceFormatParser.java
 ;; [4] https://github.com/rundeck-plugins/rundeck-ec2-nodes-plugin
 ;;
-(ns rundeck-clj-plugin.nodes
+(ns rundeck-zbx-plugin.nodes
   (:import
    (com.dtolabs.rundeck.plugins.util DescriptionBuilder PropertyBuilder)
    (com.dtolabs.rundeck.core.common INodeEntry NodeEntryImpl NodeSetImpl)

@@ -19,7 +19,7 @@
 
 // The same namespace as in the clojure  code. That is a choice, not a
 // requirement:
-package rundeck_clj_plugin;
+package rundeck_zbx_plugin;
 
 import com.dtolabs.rundeck.core.execution.workflow.steps.StepException;
 import com.dtolabs.rundeck.core.plugins.Plugin;
@@ -38,8 +38,8 @@ import clojure.lang.IFn;
 public class HelloStep implements StepPlugin, Describable {
     // Define a name  used to identify your plugin. It  is a good idea
     // to use a fully qualified package-style name.
-    public static final String NAME = "rundeck_clj_plugin.HelloStep";
-    static final String ns = "rundeck-clj-plugin.step";
+    public static final String NAME = "rundeck_zbx_plugin.HelloStep";
+    static final String ns = "rundeck-zbx-plugin.step";
 
     //
     // Trying to  call Clojure  from here without  the voodo  with the
