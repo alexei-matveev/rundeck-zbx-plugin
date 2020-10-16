@@ -25,6 +25,7 @@
 ;; [4] https://github.com/rundeck-plugins/rundeck-ec2-nodes-plugin
 ;;
 (ns rundeck-zbx-plugin.nodes
+  (:require [rundeck-zbx-plugin.core :as core])
   (:import
    (com.dtolabs.rundeck.plugins.util DescriptionBuilder PropertyBuilder)
    (com.dtolabs.rundeck.core.common INodeEntry NodeEntryImpl NodeSetImpl)
@@ -38,6 +39,27 @@
       (.title "Hello Nodes")
       (.description "Supplies nodes")
       (.property (-> (PropertyBuilder/builder)
+                     (.string "url")
+                     (.title "Zabbix API URL")
+                     (.description "API URL ending with api_jsonrpc.php")
+                     (.defaultValue "https://localhost/api_jsonrpc.php")
+                     (.required true)
+                     (.build)))
+      (.property (-> (PropertyBuilder/builder)
+                     (.string "user")
+                     (.title "Zabbix user")
+                     (.description "Should have sufficient access to read hosts.")
+                     (.defaultValue "Admin")
+                     (.required true)
+                     (.build)))
+      (.property (-> (PropertyBuilder/builder)
+                     (.string "password")
+                     (.title "Password")
+                     (.description "FIXME: make it invisible")
+                     (.defaultValue "zabbix")
+                     (.required true)
+                     (.build)))
+      (.property (-> (PropertyBuilder/builder)
                      (.string "host-group")
                      (.title "Host group")
                      (.description "Identifies the group of hosts")
@@ -49,13 +71,6 @@
                      (.description "Node resources must specify a user name")
                      (.defaultValue "root")
                      (.required true)
-                     (.build)))
-      (.property (-> (PropertyBuilder/builder)
-                     (.integer "node-count")
-                     (.title "Node count")
-                     (.description "How many?")
-                     (.required false)
-                     (.defaultValue "2")
                      (.build)))
       (.build)))
 
@@ -70,12 +85,12 @@
 ;; namespaces "tainted" by  Rundeck Classes, even if  just for testing
 ;; from the CLI or such.
 (defn- make-nodes [properties]
-  ;; These defaults should  not apply, right? Rundeck  will supply its
-  ;; own, coded in Properties, wont it?
-  (let [user (get properties "user-name" "root")
-        node-count (Long/parseLong (get properties "node-count" "1"))]
-    (for [n (range node-count)
-          :let [node-name (str (gensym "node-name-"))]]
+  (let [zabbix-hosts (core/query properties)
+        ;; These defaults should not apply, right? Rundeck will supply
+        ;; its own, coded in Properties, wont it?
+        user (get properties "user-name" "root")]
+    (for [host zabbix-hosts
+          :let [node-name (:host host)]]
       (make-node {"name" node-name
                   "nodename" node-name ; obligatory
                   "hostname" (str  "127.0.0." (rand-int 255))
