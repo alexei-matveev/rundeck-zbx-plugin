@@ -29,12 +29,18 @@
       (:ip one)
       (:dns one))))
 
+;; We dont  need to strip  unused fields  down, only for  brevity when
+;; printing. Some fields are expected by Rundeck too ...
 (defn- make-host [zabbix-host]
   (let [slim-host (select-keys zabbix-host
-                               [:host :name :description #_:interfaces])
-        host-address (main-interface zabbix-host)]
-    ;; Rundeck convention ist to call it hostname, even it is an IP:
-    (assoc slim-host :hostname host-address)))
+                               [:host :name :description #_:interfaces])]
+    ;; Kepp Zabbix fields, augment with Rundeck fields:
+    (-> slim-host
+        ;; Rundeck convention ist to call it hostname, even it is an IP:
+        (assoc :hostname (main-interface zabbix-host))
+        ;; These two are obligatory:
+        (assoc :nodename (:host zabbix-host))
+        (assoc :user "root"))))
 
 ;;
 ;; Properties should supply at least these fields:
