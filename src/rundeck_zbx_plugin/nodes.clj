@@ -89,12 +89,11 @@
         ;; These defaults should not apply, right? Rundeck will supply
         ;; its own, coded in Properties, wont it?
         user (get properties "user-name" "root")]
-    (for [host zabbix-hosts
-          :let [node-name (:host host)]]
-      (make-node {"name" node-name
-                  "nodename" node-name ; obligatory
-                  "hostname" (str  "127.0.0." (rand-int 255))
-                  "username" user}
+    (for [host zabbix-hosts]
+      (make-node {"name" (:nodename host)     ; FIXME: do we need it?
+                  "nodename" (:nodename host) ; obligatory
+                  "hostname" (:hostname host)
+                  "username" (or user (:user host))}
                  #{(get ["production" "staging" "test"] (rand-int 3))}))))
 
 (defn create-resource-model-source [properties]
