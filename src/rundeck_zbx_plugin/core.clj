@@ -50,7 +50,7 @@
 ;;    "password" "password"
 ;;    "host-group" "Zabbix servers"}
 ;;
-(defn do-query [properties]
+(defn- do-query [properties]
   (let [config {:url (get properties "url")
                 :user (get properties "user")
                 :password (get properties "password")}
