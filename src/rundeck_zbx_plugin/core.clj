@@ -49,18 +49,29 @@
 ;;    "user" "user"
 ;;    "password" "password"}
 ;;
+(defn- zbx-once [config method params]
+  (let [zbx (api/make-zbx config)
+        ;; FIXME: only for seq?
+        res (doall
+             (zbx method params))]
+    (zbx "user.logout")
+    res))
+
 (defn query [properties]
   (let [config {:url (get properties "url")
                 :user (get properties "user")
                 :password (get properties "password")}
-        zbx (api/make-zbx config)
-        ;; Force eval, see user.logout below:
-        zabbix-hosts (doall
-                      (zbx "host.get" {:selectInterfaces "extend"}))
-        hosts (map make-host zabbix-hosts)]
-    ;; Dont forget to logout:
-    (zbx "user.logout")
-    (take 5 hosts)))
+        hosts (try
+                (zbx-once config
+                          "host.get"
+                          {:selectInterfaces "extend"})
+                (catch clojure.lang.ExceptionInfo e
+                  ;; NOTE: Passwords may leak here ... Add data
+                  ;; to the message, Rundeck and Leiningen only
+                  ;; show the message.
+                  (let [data (ex-data e)]
+                    (throw (ex-info (str (ex-message e) " Data: " data) data e)))))]
+    (take 5 (map make-host hosts))))
 
 ;; For  testing purposes  read  properties  from a  file  and run  the
 ;; query.  Eventually we  should format  the output  as Yaml/Json  for
