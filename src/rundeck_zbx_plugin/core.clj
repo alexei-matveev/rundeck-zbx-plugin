@@ -53,13 +53,25 @@
   (let [config {:url (get properties "url")
                 :user (get properties "user")
                 :password (get properties "password")}
-        host-group (get properties "host-group")
         zbx (api/make-zbx config)
+        ;; The  API  call  host.get  needs groupids  it  you  want  to
+        ;; restrict  the output  to  a  few host  groups.   This is  a
+        ;; dictionaty to translate names to such groupids:
+        group-dict (into {} (for [g (zbx "hostgroup.get")]
+                              [(:name g) (:groupid g)]))
+        ;; What do we  do if the name is not  found? De-facto an empty
+        ;; list of hosts is returned in this case:
+        host-group (get properties "host-group")
+        groupid (get group-dict host-group)
+        ;; Force lalzy sequences, see logout below:
         hosts (doall
                (zbx "host.get"
-                    {:selectInterfaces "extend"}))]
+                    {:groupids [groupid]
+                     :selectInterfaces "extend"}))]
     (zbx "user.logout")
-    (take 5 (map make-host hosts))))
+    ;; Maybe we  should implement  taking ranges  of hosts?  Like with
+    ;; offest and limit in SQL?
+    (map make-host hosts)))
 
 ;; NOTE: Passwords may leak here ...  Add data to the message, Rundeck
 ;; and  Leiningen only  show the  message, this  makes troubleshooting
