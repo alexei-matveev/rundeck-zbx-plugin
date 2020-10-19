@@ -75,12 +75,19 @@
                      (.build)))
       (.build)))
 
-(defn- make-node [attributes tags]
-  (doto (NodeEntryImpl.)
-    ;; Should better be a mutable HashSet:
-    (.setTags tags)
-    ;; Should better be a mutable HashMap:
-    (.setAttributes attributes)))
+;; Rundeck HashMap  keys must be  strings.  Note that  (str :nodename)
+;; were ":nodename" not "nodename".
+(defn- stringify-keys [dict]
+  (into {} (for [[k v] dict] [(name k) v])))
+
+(defn- make-node [host]
+  (let [attr (dissoc host :tags)
+        tags (:tags host)]
+    (doto (NodeEntryImpl.)
+      ;; Should better be a mutable HashSet:
+      (.setTags tags)
+      ;; Should better be a mutable HashMap:
+      (.setAttributes (stringify-keys attr)))))
 
 ;; You will  probably want to move  the core functionality out  of the
 ;; namespaces "tainted" by  Rundeck Classes, even if  just for testing
@@ -91,11 +98,7 @@
         ;; its own, coded in Properties, wont it?
         user (get properties "user-name" "root")]
     (for [host zabbix-hosts]
-      (make-node {"nodename" (:nodename host) ; obligatory
-                  "hostname" (:hostname host)
-                  "username" (or user (:user host))
-                  "description" (:description host)}
-                 #{(get ["production" "staging" "test"] (rand-int 3))}))))
+      (make-node (assoc host :user user)))))
 
 (defn create-resource-model-source [properties]
   (println "create-resource-model-source: building resource model source ...")
