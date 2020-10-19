@@ -9,6 +9,22 @@
             [clojure.pprint :as pp])
   (:gen-class))
 
+;;
+;; Tags are returned from Zabbix API as an array of tag/value pairs:
+;;
+;;     :tags [{:tag "Tag", :value ""}
+;;            {:tag "Key", :value "Value"}
+;;            {:tag "Key", :value "Another Value"}]
+;;
+;; In Rundeck  each of these  pairs will need  to be collapsed  into a
+;; single string. So be it:
+;;
+(defn- find-tags [zabbix-host]
+  (for [{:keys [tag value]} (:tags zabbix-host)]
+    (if (= "" value)
+      tag
+      (str tag "=" value))))
+
 ;; Main interface is marked with :main "1":
 (comment
   (let [fake-host {:interfaces [{:ip "127.0.0.1",
@@ -20,9 +36,9 @@
                                  :details [],
                                  :dns "localhost",
                                  :main "1"}]}]
-    (main-interface fake-host)))
+    (find-interface fake-host)))
 
-(defn- main-interface [zabbix-host]
+(defn- find-interface [zabbix-host]
   (let [interfaces (:interfaces zabbix-host)
         [one] (get (group-by :main interfaces) "1" [nil])]
     (if (= "1" (:useip one))
@@ -34,13 +50,17 @@
 (defn- make-host [zabbix-host]
   (let [slim-host (select-keys zabbix-host
                                [:host :name :description #_:interfaces])]
-    ;; Kepp Zabbix fields, augment with Rundeck fields:
+    ;; Keep some Zabbix fields, augment with Rundeck fields:
     (-> slim-host
-        ;; Rundeck convention ist to call it hostname, even it is an IP:
-        (assoc :hostname (main-interface zabbix-host))
         ;; These two are obligatory:
         (assoc :nodename (:host zabbix-host))
-        (assoc :user "root"))))
+        (assoc :user "root")
+        ;; Rundeck convention ist to call it hostname, even it is an IP:
+        (assoc :hostname (find-interface zabbix-host))
+        ;; Here be  dragons: "tags" is  both a string attribute  and a
+        ;; separate array-valued  field of a Rundeck  Node.  Still, we
+        ;; keep them as a list here:
+        (assoc :tags (find-tags zabbix-host)))))
 
 ;;
 ;; Properties should supply at least these fields:
@@ -68,10 +88,12 @@
         hosts (doall
                (zbx "host.get"
                     {:groupids [groupid]
-                     :selectInterfaces "extend"}))]
+                     :selectInterfaces "extend"
+                     :selectTags "extend"}))]
     (zbx "user.logout")
     ;; Maybe we  should implement  taking ranges  of hosts?  Like with
     ;; offest and limit in SQL?
+    #_hosts
     (map make-host hosts)))
 
 ;; NOTE: Passwords may leak here because  we add exception data to the
