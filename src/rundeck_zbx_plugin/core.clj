@@ -57,21 +57,24 @@
     (zbx "user.logout")
     res))
 
-(defn query [properties]
+(defn do-query [properties]
   (let [config {:url (get properties "url")
                 :user (get properties "user")
                 :password (get properties "password")}
-        hosts (try
-                (zbx-once config
-                          "host.get"
-                          {:selectInterfaces "extend"})
-                (catch clojure.lang.ExceptionInfo e
-                  ;; NOTE: Passwords may leak here ... Add data
-                  ;; to the message, Rundeck and Leiningen only
-                  ;; show the message.
-                  (let [data (ex-data e)]
-                    (throw (ex-info (str (ex-message e) " Data: " data) data e)))))]
+        host-group (get properties "host-group")
+        hosts (zbx-once config
+                        "host.get"
+                        {:selectInterfaces "extend"})]
     (take 5 (map make-host hosts))))
+
+(defn query [properties]
+  ;; NOTE:  Passwords may  leak  here  ... Add  data  to the  message,
+  ;; Rundeck and Leiningen only show the message.
+  (try
+    (do-query properties)
+    (catch Exception e
+      (let [data (ex-data e)]
+        (throw (ex-info (str (ex-message e) " Data: " data) data e))))))
 
 ;; For  testing purposes  read  properties  from a  file  and run  the
 ;; query.  Eventually we  should format  the output  as Yaml/Json  for
