@@ -47,7 +47,8 @@
 ;;
 ;;   {"url" "https://zabbix.example.com/api_jsonrpc.php"
 ;;    "user" "user"
-;;    "password" "password"}
+;;    "password" "password"
+;;    "host-group" "Zabbix servers"}
 ;;
 (defn do-query [properties]
   (let [config {:url (get properties "url")
