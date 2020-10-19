@@ -20,10 +20,11 @@
 ;; single string. So be it:
 ;;
 (defn- find-tags [zabbix-host]
-  (for [{:keys [tag value]} (:tags zabbix-host)]
-    (if (= "" value)
-      tag
-      (str tag "=" value))))
+  (set
+   (for [{:keys [tag value]} (:tags zabbix-host)]
+     (if (= "" value)
+       tag
+       (str tag "=" value)))))
 
 ;; Main interface is marked with :main "1":
 (comment
