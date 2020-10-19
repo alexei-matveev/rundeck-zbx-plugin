@@ -64,7 +64,7 @@
         ;; list of hosts is returned in this case:
         host-group (get properties "host-group")
         groupid (get group-dict host-group)
-        ;; Force lalzy sequences, see logout below:
+        ;; Force lazy sequences, see logout below:
         hosts (doall
                (zbx "host.get"
                     {:groupids [groupid]
@@ -74,9 +74,9 @@
     ;; offest and limit in SQL?
     (map make-host hosts)))
 
-;; NOTE: Passwords may leak here ...  Add data to the message, Rundeck
-;; and  Leiningen only  show the  message, this  makes troubleshooting
-;; difficult.
+;; NOTE: Passwords may leak here because  we add exception data to the
+;; message text.  Rundeck and  Leiningen only  show the  message, this
+;; makes troubleshooting difficult.
 (defn query [properties]
   (try
     (do-query properties)
