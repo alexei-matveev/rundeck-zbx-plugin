@@ -1,7 +1,11 @@
 ;;
-;; This namespace  should remain free  of Rundeck specifics.  You will
-;; definitely  wanto  to  test  some  core  funcitonality  outside  of
-;; Rundeck. Maybe you should also implement a CLI ...
+;; This namespace should  remain free of Rundeck Classes  and stick to
+;; Clojure conventions.  Because you will definitely want to test some
+;; core  funcitonality  outside  of  Rundeck. Maybe  you  should  also
+;; implement a CLI that returns Rundeck Resources in YAML form ...
+;;
+;; Because  of this  it is  OK to  refer require  this namespace  from
+;; node.clj but not the other way around.
 ;;
 (ns rundeck-zbx-plugin.core
   (:require [proto-zabbix.api :as api]
