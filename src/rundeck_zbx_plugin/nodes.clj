@@ -80,6 +80,10 @@
 (defn- stringify-keys [dict]
   (into {} (for [[k v] dict] [(name k) v])))
 
+;; Rest of the Clojure World uses keywords as keys:
+(defn- keywordize-keys [dict]
+  (into {} (for [[k v] dict] [(keyword k) v])))
+
 (defn- make-node [host]
   (let [attr (dissoc host :tags)
         tags (:tags host)]
@@ -93,7 +97,7 @@
 ;; namespaces "tainted" by  Rundeck Classes, even if  just for testing
 ;; from the CLI or such.
 (defn- make-nodes [properties]
-  (let [zabbix-hosts (core/query properties)
+  (let [zabbix-hosts (core/query (keywordize-keys properties))
         ;; This default "root" cannot  possibly apply, right?  Rundeck
         ;; will  supply "user-name"  as specified  in the  GUI or  the
         ;; default from the above PropertyBuilder, wont it?

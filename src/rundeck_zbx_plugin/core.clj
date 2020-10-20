@@ -78,15 +78,15 @@
 ;;
 ;; Properties should supply at least these fields:
 ;;
-;;   {"url" "https://zabbix.example.com/api_jsonrpc.php"
-;;    "user" "user"
-;;    "password" "password"
-;;    "host-group" "Zabbix servers"}
+;;   {:url "https://zabbix.example.com/api_jsonrpc.php"
+;;    :user "user"
+;;    :password "password"
+;;    :host-group "Zabbix servers"}
 ;;
 (defn- do-query [properties]
-  (let [config {:url (get properties "url")
-                :user (get properties "user")
-                :password (get properties "password")}
+  (let [config {:url (get properties :url)
+                :user (get properties :user)
+                :password (get properties :password)}
         zbx (api/make-zbx config)
         ;; The  API  call  host.get  needs groupids  it  you  want  to
         ;; restrict  the output  to  a  few host  groups.   This is  a
@@ -95,7 +95,7 @@
                               [(:name g) (:groupid g)]))
         ;; What do we  do if the name is not  found? De-facto an empty
         ;; list of hosts is returned in this case:
-        host-group (get properties "host-group")
+        host-group (get properties :host-group)
         groupid (get group-dict host-group)
         ;; Force lazy sequences, see logout below:
         hosts (doall
@@ -110,8 +110,10 @@
     (map make-host hosts)))
 
 ;; NOTE: Passwords may leak here because  we add exception data to the
-;; message text.  Rundeck and  Leiningen only  show the  message, this
-;; makes troubleshooting difficult.
+;; message text.   Rundeck and Leiningen  only show the  message, this
+;; makes troubleshooting  difficult. In this namespace  properties are
+;; expected  to have  keywords like  :url, :user,  :password, etc.  as
+;; keys.
 (defn query [properties]
   (try
     (do-query properties)
