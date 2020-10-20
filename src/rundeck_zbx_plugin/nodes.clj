@@ -94,11 +94,13 @@
 ;; from the CLI or such.
 (defn- make-nodes [properties]
   (let [zabbix-hosts (core/query properties)
-        ;; These defaults should not apply, right? Rundeck will supply
-        ;; its own, coded in Properties, wont it?
-        user (get properties "user-name" "root")]
+        ;; This default "root" cannot  possibly apply, right?  Rundeck
+        ;; will  supply "user-name"  as specified  in the  GUI or  the
+        ;; default from the above PropertyBuilder, wont it?
+        user-name (get properties "user-name" "root")]
     (for [host zabbix-hosts]
-      (make-node (assoc host :user user)))))
+      ;; The key should be spelled "username", not "user":
+      (make-node (assoc host :username user-name)))))
 
 (defn create-resource-model-source [properties]
   (println "create-resource-model-source: building resource model source ...")

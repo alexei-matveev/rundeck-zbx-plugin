@@ -55,7 +55,7 @@
     (-> slim-host
         ;; These two are obligatory:
         (assoc :nodename (:host zabbix-host))
-        (assoc :user "root")
+        (assoc :username "root")
         ;; Rundeck convention ist to call it hostname, even it is an IP:
         (assoc :hostname (find-interface zabbix-host))
         ;; Here be  dragons: "tags" is  both a string attribute  and a
