@@ -16,8 +16,8 @@
 ;;            {:tag "Key", :value "Value"}
 ;;            {:tag "Key", :value "Another Value"}]
 ;;
-;; In Rundeck  each of these  pairs will need  to be collapsed  into a
-;; single string. So be it:
+;; Tags in  Rundeck is a HashSet<String>  so that each of  these pairs
+;; will need to be compacted into a single string:
 ;;
 (defn- find-tags [zabbix-host]
   (set
@@ -26,19 +26,14 @@
        tag
        (str tag "=" value)))))
 
-;; Main interface is marked with :main "1":
-(comment
-  (let [fake-host {:interfaces [{:ip "127.0.0.1",
-                                 :useip "0",
-                                 :hostid "10095",
-                                 :interfaceid "5",
-                                 :type "1",
-                                 :port "10050",
-                                 :details [],
-                                 :dns "localhost",
-                                 :main "1"}]}]
-    (find-interface fake-host)))
-
+;;
+;; This  is how  the interfaces  are  returned from  Zabbix API.  Main
+;; interface is marked with :main "1":
+;;
+;;     :interfaces [{:ip "127.0.0.1", :useip "0", :hostid "10095",
+;;                   :interfaceid "5", :type "1", :port "10050", :details
+;;                   [], :dns "localhost", :main "1"}]
+;;
 (defn- find-interface [zabbix-host]
   (let [interfaces (:interfaces zabbix-host)
         [one] (get (group-by :main interfaces) "1" [nil])]
