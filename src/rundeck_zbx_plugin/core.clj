@@ -58,7 +58,18 @@
         ;; Here be  dragons: "tags" is  both a string attribute  and a
         ;; separate array-valued  field of a Rundeck  Node.  Still, we
         ;; keep them as a list here:
-        (assoc :tags (find-tags zabbix-host)))))
+        (assoc :tags (find-tags zabbix-host))
+        ;;
+        ;; Docs says [1]:
+        ;;
+        ;; Specifies a URL  to a remote site which  will allow editing
+        ;; of the Node. When specified, the Node resource will display
+        ;; an "Edit" link in the Rundeck GUI and clicking it will open
+        ;; a new browser page for the URL.
+        ;;
+        ;; [1] https://docs.rundeck.com/docs/administration/projects/resource-model-sources/resource-editor.html#resource-editor
+        ;;
+        (assoc :editUrl "https://www.example.com?hostid=00000"))))
 
 ;;
 ;; Properties should supply at least these fields:
