@@ -27,7 +27,7 @@ spec:
       - name: rundeck-server
         # docker pull rundeck/rundeck
         # docker run --name some-rundeck -v data:/home/rundeck/server/data rundeck/rundeck
-        image: rundeck/rundeck:3.3.4
+        image: rundeck/rundeck:3.3.5
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 4440
