@@ -84,9 +84,7 @@
 ;;    :host-group "Zabbix servers"}
 ;;
 (defn- do-query [properties]
-  (let [config {:url (get properties :url)
-                :user (get properties :user)
-                :password (get properties :password)}
+  (let [config (select-keys properties [:url :user :password])
         zbx (api/make-zbx config)
         ;; The  API  call  host.get  needs groupids  it  you  want  to
         ;; restrict  the output  to  a  few host  groups.   This is  a
