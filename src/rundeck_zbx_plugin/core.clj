@@ -46,11 +46,13 @@
       (:ip one)
       (:dns one))))
 
-;; We dont  need to strip  unused fields  down, only for  brevity when
-;; printing. Some fields are expected by Rundeck too ...
+;; We dont need to strip unused  fields, only for brevity. Some fields
+;; are expected by Rundeck will need to be added though ...
 (defn- make-host [zabbix-host]
-  (let [slim-host (select-keys zabbix-host
-                               [:host :name :description #_:interfaces])]
+  (let [keep-fields [:host :name :description
+                     :hostid :status :available
+                     :maintenance_status #_:interfaces]
+        slim-host (select-keys zabbix-host keep-fields)]
     ;; Keep some Zabbix fields, augment with Rundeck fields:
     (-> slim-host
         ;; These two are obligatory:
