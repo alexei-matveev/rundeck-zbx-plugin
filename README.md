@@ -25,7 +25,11 @@ Install it into libext:
     $ kubectl cp target/uberjar/rundeck-zbx-plugin-0.1.0.jar hello-rundeck/rundeck-server-xxx:/home/rundeck/libext/
     $ kubectl exec rundeck-server-xxx -- ls -l /home/rundeck/libext
 
-Or upload the JAR file in GUI.
+For other instances the path may differ, eventually use SSH to deploy:
+
+    $ scp target/uberjar/rundeck-zbx-plugin-0.1.0.jar root@rundeck.example.com:/var/lib/rundeck/libext/
+
+Or just upload the JAR file in GUI if you are into it.
 
 #### License
 
