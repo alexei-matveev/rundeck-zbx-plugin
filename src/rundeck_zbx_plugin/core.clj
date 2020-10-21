@@ -10,6 +10,7 @@
 (ns rundeck-zbx-plugin.core
   (:require [proto-zabbix.api :as api]
             [clojure.edn :as edn]
+            [clojure.string :as str]
             [clojure.pprint :as pp])
   (:gen-class))
 
@@ -47,11 +48,16 @@
 
 ;; We dont need to strip unused  fields, only for brevity. Some fields
 ;; are expected by Rundeck will need to be added though ...
-(defn- make-host [zabbix-host]
+(defn- make-host [properties zabbix-host]
   (let [keep-fields [:host :name :description
                      :hostid :status :available
                      :maintenance_status #_:interfaces]
-        slim-host (select-keys zabbix-host keep-fields)]
+        slim-host (select-keys zabbix-host keep-fields)
+        ;; NOTE:  some   assumptions  about   Zabbix  URLs   are  made
+        ;; here. Below we will just append a hostid to the base-url:
+        base-url (str/replace (:url properties)
+                              #"/api_jsonrpc.php"
+                              "/hosts.php?form=update&hostid=")]
     ;; Keep some Zabbix fields, augment with Rundeck fields:
     (-> slim-host
         ;; These two are obligatory:
@@ -73,7 +79,7 @@
         ;;
         ;; [1] https://docs.rundeck.com/docs/administration/projects/resource-model-sources/resource-editor.html#resource-editor
         ;;
-        (assoc :editUrl "https://www.example.com?hostid=00000"))))
+        (assoc :editUrl (str base-url (:hostid zabbix-host))))))
 
 ;;
 ;; Properties should supply at least these fields:
@@ -106,7 +112,8 @@
     ;; offest and limit in SQL?
     #_hosts
     (for [host hosts]
-      (make-host host))))
+      ;; The editUrl can only be derived from properties:
+      (make-host properties host))))
 
 ;; NOTE: Passwords may leak here because  we add exception data to the
 ;; message text.   Rundeck and Leiningen  only show the  message, this
