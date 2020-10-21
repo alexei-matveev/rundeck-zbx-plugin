@@ -1,11 +1,11 @@
 ;;
 ;; This namespace should  remain free of Rundeck Classes  and stick to
 ;; Clojure conventions.  Because you will definitely want to test some
-;; core  funcitonality  outside  of  Rundeck. Maybe  you  should  also
+;; core  functionality  outside  of  Rundeck. Maybe  you  should  also
 ;; implement a CLI that returns Rundeck Resources in YAML form ...
 ;;
-;; Because  of this  it is  OK to  refer require  this namespace  from
-;; node.clj but not the other way around.
+;; Because  of  this  it  is  OK refer  require  this  namespace  from
+;; nodes.clj but not the other way around.
 ;;
 (ns rundeck-zbx-plugin.core
   (:require [proto-zabbix.api :as api]
@@ -105,7 +105,8 @@
     ;; Maybe we  should implement  taking ranges  of hosts?  Like with
     ;; offest and limit in SQL?
     #_hosts
-    (map make-host hosts)))
+    (for [host hosts]
+      (make-host host))))
 
 ;; NOTE: Passwords may leak here because  we add exception data to the
 ;; message text.   Rundeck and Leiningen  only show the  message, this
