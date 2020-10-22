@@ -11,6 +11,7 @@
   (:require [proto-zabbix.api :as api]
             [clojure.edn :as edn]
             [clojure.string :as str]
+            [clojure.set :as set]
             [clojure.pprint :as pp])
   (:gen-class))
 
@@ -30,6 +31,17 @@
      (if (= "" value)
        tag
        (str tag "=" value)))))
+
+;;
+;; Groups come out from API like this:
+;;
+;;     :groups [{:groupid "4", :name "Zabbix servers",
+;;               :internal "0", :flags "0"}]
+;;
+;; We will present them as Tags to Rundeck.
+;;
+(defn- find-groups [zabbix-host]
+  (set (map :name (:groups zabbix-host))))
 
 ;;
 ;; This  is how  the interfaces  are  returned from  Zabbix API.  Main
@@ -66,16 +78,21 @@
         ;; Rundeck convention ist to call it hostname, even it is an IP:
         (assoc :hostname (find-interface zabbix-host))
         ;; Here be  dragons: "tags" is  both a string attribute  and a
-        ;; separate array-valued  field of a Rundeck  Node.  Still, we
-        ;; keep them as a list here:
-        (assoc :tags (find-tags zabbix-host))
+        ;; separate  array-valued field  of  a Rundeck  Node. In  some
+        ;; places/constructors a  list of strings is  accepted.  FWIW,
+        ;; we define tags as a set of strings. There will be no way to
+        ;; tell in Rundeck  it a host belongs to host  group "Prod" or
+        ;; was rather tagged with "Prod".
+        (assoc :tags (set/union (find-tags zabbix-host)
+                                (find-groups zabbix-host)))
         ;;
-        ;; Docs says [1]:
+        ;; The field  "editUrl" is used  to link the host  to external
+        ;; site [1]:
         ;;
-        ;; Specifies a URL  to a remote site which  will allow editing
-        ;; of the Node. When specified, the Node resource will display
-        ;; an "Edit" link in the Rundeck GUI and clicking it will open
-        ;; a new browser page for the URL.
+        ;;     Specifies  a URL  to  a remote  site  which will  allow
+        ;;     editing of the Node.  When specified, the Node resource
+        ;;     will  display an  "Edit" link  in the  Rundeck GUI  and
+        ;;     clicking it will open a new browser page for the URL.
         ;;
         ;; [1] https://docs.rundeck.com/docs/administration/projects/resource-model-sources/resource-editor.html#resource-editor
         ;;
@@ -106,6 +123,7 @@
                (zbx "host.get"
                     {:groupids [groupid]
                      :selectInterfaces "extend"
+                     :selectGroups "extend"
                      :selectTags "extend"}))]
     (zbx "user.logout")
     ;; Maybe we  should implement  taking ranges  of hosts?  Like with
