@@ -19,6 +19,9 @@ and configure the source with the Cluster URL:
 
     http://zabbix-frontend.hello-zabbix.svc.cluster.local/api_jsonrpc.php
 
+The "editUrl" links will likely not  work in your browser "outside" of
+the k3s Cluster though.
+
 #### Installation
 
 Build it:
