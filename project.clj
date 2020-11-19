@@ -22,7 +22,7 @@
   ;; [2] https://search.maven.org/artifact/org.rundeck/rundeck-core
   ;;
   :profiles {:provided {:dependencies
-                        [[org.rundeck/rundeck-core "3.3.5-20201019"]]}
+                        [[org.rundeck/rundeck-core "3.3.6-20201111"]]}
              :uberjar {:jvm-opts ["-Dclojure.compiler.direct-linking=true"]}}
   ;; https://docs.rundeck.com/docs/developer/01-plugin-development.html#java-plugin-development
   :jar-name "rundeck-zbx-plugin-0.1.0.jar"
