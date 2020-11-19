@@ -12,7 +12,12 @@ Install Rundeck in Kubernetes
     $ kubectl config set-context --current --namespace=hello-rundeck
     $ kubectl apply -k k3s/
 
-Then  visit the  [URL](https://rundeck.localhost).
+Then visit the [URL](https://rundeck.localhost). You may consider
+deploying Zabbix from the
+[hello-zabbix](https://github.com/alexei-matveev/hello-zabbix) Repo
+and configure the source with the Cluster URL:
+
+    http://zabbix-frontend.hello-zabbix.svc.cluster.local/api_jsonrpc.php
 
 #### Installation
 
